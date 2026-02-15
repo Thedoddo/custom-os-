@@ -136,6 +136,11 @@ lb config \
 
 print_success "Live-build configuration created"
 
+# Remove Debian security repo that gets added by default
+print_info "Fixing security repository configuration..."
+sed -i '/security.debian.org/d' "$BUILD_DIR/config/archives/*.list.chroot" 2>/dev/null || true
+sed -i '/security.debian.org/d' "$BUILD_DIR/config/archives/*.list.binary" 2>/dev/null || true
+
 # Copy custom configuration
 print_info "Copying custom configuration..."
 cp -r "../$CONFIG_DIR/"* config/ 2>/dev/null || true

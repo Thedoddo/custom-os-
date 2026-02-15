@@ -1,0 +1,4 @@
+# Disable Debian security repository for Ubuntu-based build 
+Package: *
+Pin: release o=Debian,a=*-security
+Pin-Priority: -1
