@@ -1,0 +1,16 @@
+#!/bin/sh
+# Install custom Electron desktop package
+
+echo "Installing CustomOS Desktop..."
+
+# Find and install the .deb if it exists
+if [ -d /root/packages ]; then
+    for deb in /root/packages/*.deb; do
+        if [ -f "$deb" ]; then
+            echo "Installing $deb..."
+            dpkg -i "$deb" || apt-get install -f -y
+        fi
+    done
+fi
+
+exit 0
