@@ -15,7 +15,6 @@ xserver-xorg-input-all
 # Window manager
 openbox
 obconf
-obmenu
 
 # Display manager
 lightdm
@@ -44,7 +43,7 @@ gnupg
 pcmanfm
 xterm
 gedit
-firefox-esr
+firefox
 gpicview
 file-roller
 
