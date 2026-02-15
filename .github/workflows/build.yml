@@ -36,7 +36,8 @@ jobs:
           syslinux-efi \
           grub-pc-bin \
           grub-efi-amd64-bin \
-          mtools
+          mtools \
+          gnupg
           
     - name: Setup Node.js
       uses: actions/setup-node@v4
