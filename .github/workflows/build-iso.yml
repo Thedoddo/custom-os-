@@ -1,0 +1,31 @@
+name: Build Custom OS ISO
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Archiso
+      run: |
+        sudo pacman-key --init
+        sudo pacman-key --populate archlinux
+        sudo pacman -Syu --noconfirm archiso
+    
+    - name: Build ISO
+      run: |
+        cd iso-builder
+        sudo ./build-iso.sh
+    
+    - name: Upload ISO
+      uses: actions/upload-artifact@v3
+      with:
+        name: custom-os-iso
+        path: ~/custom-os-iso/*.iso
+        retention-days: 30

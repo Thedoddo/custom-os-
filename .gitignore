@@ -1,0 +1,21 @@
+# Node modules and dependencies
+node_modules/
+nodejs-portable/
+
+# Build outputs (keep source, exclude large binaries)
+dist/
+dist-vite/
+
+# Temp files
+temp/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Old QEMU files (not needed)
+qemu-vm/
+
+# ISO build work directories
+iso-builder/custom-os-profile/
