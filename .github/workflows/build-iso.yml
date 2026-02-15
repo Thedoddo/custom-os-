@@ -8,24 +8,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
     
     steps:
     - uses: actions/checkout@v3
     
+    - name: Setup Arch Linux
+      run: |
+        pacman-key --init
+        pacman-key --populate archlinux
+        pacman -Syu --noconfirm
+    
     - name: Install Archiso
       run: |
-        sudo pacman-key --init
-        sudo pacman-key --populate archlinux
-        sudo pacman -Syu --noconfirm archiso
+        pacman -S --noconfirm archiso base-devel
     
     - name: Build ISO
       run: |
         cd iso-builder
-        sudo ./build-iso.sh
+        ./build-iso.sh
     
     - name: Upload ISO
       uses: actions/upload-artifact@v3
       with:
         name: custom-os-iso
-        path: ~/custom-os-iso/*.iso
+        path: /root/custom-os-iso/*.iso
         retention-days: 30
