@@ -1,0 +1,16 @@
+#!/bin/sh
+# Remove Debian security repository entries
+
+echo "Removing Debian security repository entries..."
+
+# Remove from sources.list
+if [ -f /etc/apt/sources.list ]; then
+    sed -i '/security.debian.org/d' /etc/apt/sources.list
+fi
+
+# Remove from sources.list.d
+if [ -d /etc/apt/sources.list.d ]; then
+    find /etc/apt/sources.list.d -type f -exec sed -i '/security.debian.org/d' {} \;
+fi
+
+exit 0
