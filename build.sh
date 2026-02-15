@@ -118,7 +118,7 @@ print_info "Initializing live-build configuration..."
 # Initialize live-build
 lb config \
     --binary-images iso-hybrid \
-    --mode debian \
+    --mode ubuntu \
     --architectures amd64 \
     --linux-flavours generic \
     --distribution jammy \
@@ -126,8 +126,6 @@ lb config \
     --mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
     --mirror-chroot "http://archive.ubuntu.com/ubuntu/" \
     --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
-    --mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
     --apt-recommends false \
     --apt-indices false \
     --bootappend-live "boot=live components quiet splash" \
