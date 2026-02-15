@@ -126,7 +126,7 @@ lb config \
     --mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
     --mirror-chroot "http://archive.ubuntu.com/ubuntu/" \
     --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
-    --debootstrap-options "--include=gnupg" \
+    --apt-secure false \
     --apt-recommends false \
     --apt-indices false \
     --bootappend-live "boot=live components quiet splash" \
