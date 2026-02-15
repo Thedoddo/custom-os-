@@ -1,0 +1,74 @@
+#!/bin/bash
+# Post-installation hook to configure the system
+
+set -e
+
+echo "CustomOS: Running post-installation configuration..."
+
+# Create default user (customos with password: customos)
+if ! id "customos" &>/dev/null; then
+    useradd -m -s /bin/bash -G sudo,audio,video,plugdev,netdev customos
+    echo "customos:customos" | chpasswd
+    echo "Created default user: customos"
+fi
+
+# Configure LightDM to use our desktop
+if [ -d /etc/lightdm ]; then
+    cat > /etc/lightdm/lightdm.conf.d/50-customos.conf <<EOF
+[Seat:*]
+user-session=customos
+autologin-user=customos
+autologin-user-timeout=0
+EOF
+    echo "Configured LightDM"
+fi
+
+# Make desktop session script executable
+chmod +x /usr/bin/custom-os-desktop
+
+# Set permissions for Electron app (will be set by .deb package)
+# chmod +x /opt/custom-os-desktop/custom-os-desktop || true
+
+# Configure default applications
+mkdir -p /etc/skel/.config
+mkdir -p /home/customos/.config
+
+# Copy config to both skeleton and existing user
+for dir in /etc/skel /home/customos; do
+    # PCManFM configuration
+    mkdir -p "$dir/.config/pcmanfm/default"
+    
+    # LXTerminal configuration (if using it)
+    mkdir -p "$dir/.config/lxterminal"
+done
+
+# Set proper ownership for customos user
+chown -R customos:customos /home/customos
+
+# Enable services
+systemctl enable lightdm
+systemctl enable NetworkManager
+systemctl enable bluetooth
+
+# Set hostname
+echo "customos" > /etc/hostname
+
+# Configure hosts file
+cat > /etc/hosts <<EOF
+127.0.0.1       localhost
+127.0.1.1       customos
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
+
+# Set timezone to UTC (users can change later)
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
+# Generate locales
+locale-gen en_US.UTF-8
+update-locale LANG=en_US.UTF-8
+
+echo "CustomOS: Post-installation configuration complete!"

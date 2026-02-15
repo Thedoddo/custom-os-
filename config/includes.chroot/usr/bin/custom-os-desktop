@@ -1,0 +1,11 @@
+#!/bin/bash
+# CustomOS Desktop Session Script
+
+# Start OpenBox window manager in the background
+openbox &
+
+# Wait a moment for WM to initialize
+sleep 1
+
+# Start the Electron desktop shell
+exec /opt/custom-os-desktop/custom-os-desktop

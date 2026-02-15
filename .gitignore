@@ -1,21 +1,54 @@
-# Node modules and dependencies
-node_modules/
-nodejs-portable/
+# Build directories
+build/
+*.iso
+*.iso.sha256
 
-# Build outputs (keep source, exclude large binaries)
-dist/
-dist-vite/
+# Electron
+desktop/node_modules/
+desktop/dist/
+desktop/out/
+desktop/.webpack/
 
-# Temp files
-temp/
+# Package files
+*.deb
+*.rpm
+*.pkg.tar.xz
+
+# Logs
 *.log
+build.log
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Old QEMU files (not needed)
-qemu-vm/
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# ISO build work directories
-iso-builder/custom-os-profile/
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Config (created during build)
+config/packages.chroot/*.deb
+
+# Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Testing
+test-vm/
+*.qcow2
+
+# Certificates and keys (if any)
+*.pem
+*.key
+*.crt

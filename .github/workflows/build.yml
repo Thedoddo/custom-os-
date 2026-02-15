@@ -1,0 +1,89 @@
+name: Build CustomOS ISO
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Free up disk space
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /opt/ghc
+        sudo rm -rf "/usr/local/share/boost"
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        sudo apt-get clean
+        df -h
+        
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          live-build \
+          debootstrap \
+          squashfs-tools \
+          xorriso \
+          isolinux \
+          syslinux-efi \
+          grub-pc-bin \
+          grub-efi-amd64-bin \
+          mtools
+          
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Build Electron Desktop
+      run: |
+        cd desktop
+        npm install
+        npm run build
+        cd ..
+        
+    - name: Prepare build directory
+      run: |
+        mkdir -p config/packages.chroot
+        cp desktop/dist/*.deb config/packages.chroot/ || true
+        
+    - name: Build ISO
+      run: |
+        sudo ./build.sh
+        
+    - name: Calculate ISO checksum
+      run: |
+        sha256sum custom-os.iso > custom-os.iso.sha256
+        cat custom-os.iso.sha256
+        
+    - name: Upload ISO artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: custom-os-iso
+        path: |
+          custom-os.iso
+          custom-os.iso.sha256
+        retention-days: 30
+        
+    - name: Get ISO info
+      run: |
+        ls -lh custom-os.iso
+        echo "ISO Size: $(du -h custom-os.iso | cut -f1)"
+        
+    - name: Create Release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          custom-os.iso
+          custom-os.iso.sha256
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

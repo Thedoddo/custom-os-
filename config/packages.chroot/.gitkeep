@@ -1,0 +1,7 @@
+# Packages directory for local .deb files
+
+This directory will contain the Electron desktop .deb package during the build process.
+
+Files placed here will be installed during ISO creation.
+
+The build script automatically copies `desktop/dist/*.deb` here.

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=CustomOS Desktop
+Comment=Electron-based Desktop Environment
+Exec=/usr/bin/custom-os-desktop
+Type=Application
+DesktopNames=CustomOS
+X-Ubuntu-Gettext-Domain=customos

@@ -1,131 +1,216 @@
-# Custom OS - Linux Distribution with Liquid Glass Desktop
+# CustomOS - Linux Distribution with Electron Desktop
 
-A custom Linux distribution featuring a beautiful Electron-based desktop environment with liquid glass effects.
+A custom Linux distribution featuring a modern desktop environment built with Electron.
 
-## 🎯 What is This?
+## 🎯 Project Overview
 
-**Two things in one:**
-1. **Custom Desktop** - Liquid glass UI with blur effects (Electron + React)
-2. **Linux Distro** - Bootable ISO with auto-login and custom desktop
+CustomOS is a Ubuntu-based Linux distribution with a custom desktop environment powered by Electron. It combines the stability of Ubuntu with a sleek, modern interface built using web technologies.
 
-## ✨ Features
+### Features
 
-### Desktop Environment
-- 💎 **Liquid Glass Effects** - Blur, transparency, smooth animations
-- 🎨 **4 Themes** - Purple, Ocean, Midnight, Sunset
-- 🚀 **Launcher** - Quick app access
-- ⚙️ **Settings** - Customize appearance
-- 🪟 **Window Management** - Modern controls
+- **Custom Electron Desktop**: Modern UI built with HTML/CSS/JavaScript
+- **Lightweight**: Based on Ubuntu minimal with only essential packages
+- **Fast Boot**: Optimized for quick startup times
+- **Modern Design**: Clean, intuitive interface
+- **Full Desktop Experience**: Top panel, application launcher, system tray, settings
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────┐
+│   Electron Desktop Shell (UI)      │
+│   - Top Panel                       │
+│   - App Launcher                    │
+│   - System Tray                     │
+│   - Settings                        │
+├─────────────────────────────────────┤
+│   Window Manager (Openbox)         │
+├─────────────────────────────────────┤
+│   Display Server (X11)             │
+├─────────────────────────────────────┤
+│   Ubuntu Base System               │
+└─────────────────────────────────────┘
+```
+
+## 📦 Components
+
+- **Base**: Ubuntu 24.04 LTS (minimal)
+- **Display Server**: X.org
+- **Window Manager**: Openbox (lightweight, configurable)
+- **Login Manager**: LightDM
+- **Desktop Shell**: Custom Electron application
+- **File Manager**: PCManFM
+- **Terminal**: xterm / Electron-based custom terminal
 
 ## 🚀 Quick Start
 
-### Run Desktop on Windows NOW
+### Prerequisites
 
-```powershell
-cd dist\win-unpacked
-.\CustomOS.exe
+- Linux system (Ubuntu/Debian recommended)
+- `live-build` package installed
+- 20GB+ free disk space
+- Sudo privileges
+
+### Building the ISO
+
+```bash
+# Install dependencies
+sudo apt-get update
+sudo apt-get install live-build debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools
+
+# Build the ISO
+sudo ./build.sh
 ```
 
-## 📦 Project Structure
+The ISO will be created in `build/` directory.
+
+### Using GitHub Actions
+
+This project includes CI/CD configuration. Push to GitHub to automatically build the ISO:
+
+```bash
+git add .
+git commit -m "Build custom OS"
+git push
+```
+
+Download the artifact from the Actions tab.
+
+## 🛠️ Development
+
+### Desktop Application
+
+The Electron desktop is located in `desktop/` directory.
+
+```bash
+cd desktop
+npm install
+npm start  # Run in development mode
+```
+
+### Customization
+
+- **UI Styling**: Edit `desktop/src/renderer/styles.css`
+- **Panel Layout**: Modify `desktop/src/renderer/panel.html`
+- **Launcher**: Customize `desktop/src/renderer/launcher.html`
+- **System Integration**: Edit `desktop/src/main/system.js`
+
+### Building Desktop Package
+
+```bash
+cd desktop
+npm run build
+```
+
+This creates a `.deb` package in `desktop/dist/`.
+
+## 📁 Project Structure
 
 ```
 distro/
-├── src/               # Desktop source (React + Electron)
-├── dist/              # Built executables
-│   ├── win-unpacked/  # Windows build
-│   └── linux-unpacked/  # Linux build
-├── iso-builder/       # Linux distro builder
-└── package.json       # Dependencies
+├── desktop/                 # Electron desktop application
+│   ├── src/
+│   │   ├── main/           # Main process (Node.js)
+│   │   └── renderer/       # Renderer process (UI)
+│   ├── package.json
+│   └── electron-builder.yml
+├── config/                  # Live-build configuration
+│   ├── hooks/              # Build hooks
+│   ├── includes/           # Files to include in ISO
+│   └── package-lists/      # Package selections
+├── build.sh                # Main build script
+├── .github/workflows/      # CI/CD configuration
+└── README.md
 ```
 
-## 🐧 Building a Linux Distro
+## 🎨 Customization Guide
 
-### Three Approaches
+### Changing the Theme
 
-#### 1️⃣  Archiso (RECOMMENDED)
-**Arch Linux based, easiest, auto-login built-in**
+Edit `desktop/src/renderer/styles.css`:
 
-✅ One command builds ISO  
-✅ Auto-login support  
-✅ Rolling release (latest packages)  
-✅ Minimal  
-⏱️ Build time: ~30 min  
+```css
+:root {
+  --primary-color: #3498db;
+  --background-color: #2c3e50;
+  --text-color: #ecf0f1;
+}
+```
 
-**Setup:**
+### Adding Applications
+
+Add to package list in `config/package-lists/desktop.list.chroot`:
+
+```
+firefox
+gimp
+vlc
+```
+
+### Boot Configuration
+
+Edit GRUB settings in `config/includes.chroot/etc/default/grub`.
+
+## 🧪 Testing
+
+### Virtual Machine
+
+Test the ISO using QEMU:
+
 ```bash
-# On Arch Linux or WSL2 Arch
-sudo pacman -S archiso
-cp -r /usr/share/archiso/configs/releng/ my-os
-# Edit packages, add desktop, build
-sudo mkarchiso -v my-os/
+qemu-system-x86_64 -cdrom build/custom-os.iso -m 2048 -enable-kvm
 ```
 
-#### 2️⃣ Debian Live-Build
-**Ubuntu/Debian based, familiar**
+Or use VirtualBox/VMware:
+- Create new VM
+- Attach ISO as CD-ROM
+- Boot and test
 
-✅ Stable  
-✅ Huge package repo  
-✅ Familiar apt  
-⚠️ More complex  
-⏱️ Build time: ~1 hour  
+### Live USB
 
-#### 3️⃣ Linux From Scratch
-**Build everything from source**
+Create bootable USB (Linux):
 
-✅ Maximum control  
-❌ Takes weeks  
-❌ Very complex  
+```bash
+sudo dd if=build/custom-os.iso of=/dev/sdX bs=4M status=progress
+sync
+```
 
-### Why Archiso?
+**Warning**: Replace `/dev/sdX` with your actual USB device. This will erase the USB!
 
-After researching, **Archiso is perfect** because:
-- Auto-login already works (no hacking needed)
-- Single command builds ISO
-- Fast rebuilds for testing
-- Minimalist philosophy matches our vision
+## 📚 Documentation
 
-## 📋 Current Status
+- [Building Guide](docs/building.md)
+- [Desktop Development](docs/desktop.md)
+- [Customization](docs/customization.md)
+- [Troubleshooting](docs/troubleshooting.md)
 
-- [x] Desktop UI complete
-- [x] Liquid glass effects
-- [x] 4 themes implemented
-- [x] Windows build working
-- [x] Linux build working
-- [ ] ISO builder configured
-- [ ] First bootable ISO
-- [ ] USB installer
+## 🤝 Contributing
 
-## 🛠️ Next Steps
+This is a hobby project for learning. Feel free to fork and experiment!
 
-1. Set up Archiso in WSL2
-2. Create build profile
-3. Add custom desktop
-4. Configure auto-login
-5. Build first ISO
-6. Test in QEMU
+## 📝 License
 
-## 💡 The Vision  
+MIT License - See LICENSE file
 
-> "A middle ground that ascends both Windows and Linux"
+## 🔗 Resources
 
-- Beautiful liquid glass UI
-- No login screens
-- Fast boot
-- Simple and natural
+- [Electron Documentation](https://www.electronjs.org/docs)
+- [Debian Live Manual](https://live-team.pages.debian.net/live-manual/html/live-manual/index.en.html)
+- [Ubuntu ISO Customization](https://help.ubuntu.com/community/LiveCDCustomization)
 
-## 🔧 Tech Stack
+## 🎯 Roadmap
 
-- **Desktop**: Electron 28, React 18, TailwindCSS, Framer Motion
-- **Base**: Arch Linux (via Archiso)
-- **Display**: LightDM (auto-login)
-- **WM**: Openbox
-- **Compositor**: Picom
+- [x] Basic Electron desktop shell
+- [x] ISO build system
+- [x] GitHub Actions CI/CD
+- [ ] Custom application launcher
+- [ ] Settings panel
+- [ ] Network manager GUI
+- [ ] Power management
+- [ ] Custom greeter theme
+- [ ] Notification system
+- [ ] Multi-monitor support
 
-## 📚 Resources
+---
 
-- [Archiso Wiki](https://wiki.archlinux.org/title/Archiso)
-- [Linux From Scratch](https://www.linuxfromscratch.org/)
-
-## License
-
-MIT
+**Made with ❤️ for learning Linux internals and Electron**

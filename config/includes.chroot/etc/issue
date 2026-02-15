@@ -1,0 +1,10 @@
+# /etc/issue - Pre-login message
+
+CustomOS \\r (\\l)
+
+Welcome to CustomOS - A modern Linux desktop environment
+
+Default login:
+  Username: customos
+  Password: customos
+
