@@ -54,6 +54,7 @@ jobs:
       run: |
         mkdir -p config/packages.chroot
         cp desktop/dist/*.deb config/packages.chroot/ || true
+        chmod +x build.sh
         
     - name: Build ISO
       run: |
