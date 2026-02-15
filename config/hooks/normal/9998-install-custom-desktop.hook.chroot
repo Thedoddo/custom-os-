@@ -1,16 +1,29 @@
 #!/bin/sh
 # Install custom Electron desktop package
 
-echo "Installing CustomOS Desktop..."
+set -e  # Exit on error
+set -x  # Print commands
+
+echo "=== Installing CustomOS Desktop ==="
+ls -la /opt/ || true
+ls -la /opt/customos/ || true
 
 # Find and install the .deb if it exists
 if [ -d /opt/customos ]; then
     for deb in /opt/customos/*.deb; do
         if [ -f "$deb" ]; then
+            echo "Found .deb: $deb"
             echo "Installing $deb..."
-            dpkg -i "$deb" || apt-get install -f -y
+            dpkg -i "$deb" 2>&1 | tee /tmp/dpkg-install.log || {
+                echo "dpkg failed, trying apt-get fix..."
+                apt-get install -f -y 2>&1 | tee /tmp/apt-fix.log
+            }
         fi
     done
+else
+    echo "ERROR: /opt/customos directory does not exist!"
+    exit 1
 fi
 
+echo "=== Installation complete ==="
 exit 0
