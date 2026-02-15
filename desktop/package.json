@@ -18,7 +18,6 @@
     "electron-builder": "^24.9.1"
   },
   "dependencies": {
-    "dbus-next": "^0.10.2",
     "systeminformation": "^5.21.20"
   },
   "build": {
