@@ -53,8 +53,8 @@ jobs:
         
     - name: Prepare build directory
       run: |
-        mkdir -p config/includes.chroot/root/packages
-        cp desktop/dist/*.deb config/includes.chroot/root/packages/ || true
+        mkdir -p config/includes.chroot/opt/customos
+        cp desktop/dist/*.deb config/includes.chroot/opt/customos/ || true
         chmod +x build.sh
         
     - name: Build ISO

@@ -4,8 +4,8 @@
 echo "Installing CustomOS Desktop..."
 
 # Find and install the .deb if it exists
-if [ -d /root/packages ]; then
-    for deb in /root/packages/*.deb; do
+if [ -d /opt/customos ]; then
+    for deb in /opt/customos/*.deb; do
         if [ -f "$deb" ]; then
             echo "Installing $deb..."
             dpkg -i "$deb" || apt-get install -f -y
