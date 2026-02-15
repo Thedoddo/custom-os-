@@ -53,6 +53,7 @@ jobs:
         
     - name: Prepare build directory
       run: |
+        # Place .deb in /opt/customos to avoid auto-repo creation
         mkdir -p config/includes.chroot/opt/customos
         cp desktop/dist/*.deb config/includes.chroot/opt/customos/ || true
         chmod +x build.sh
