@@ -86,7 +86,7 @@ if [ -d "$DESKTOP_DIR" ]; then
     # Check if .deb was created
     if [ -f "dist/"*.deb ]; then
         print_success "Electron desktop package built successfully"
-        cp dist/*.deb "../$CONFIG_DIR/packages.chroot/"
+        # Note: .deb is copied by GitHub Actions workflow to config/includes.chroot/opt/customos/
     else
         print_error "Failed to build Electron desktop package"
         exit 1
