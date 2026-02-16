@@ -24,15 +24,16 @@ jobs:
           bash -c '
             # Update system and install dependencies
             pacman -Syu --noconfirm
-            pacman -S --noconfirm archiso git sudo
+            pacman -S --noconfirm archiso git sudo dos2unix
+            
+            # Fix Windows line endings
+            find scripts wine-integration -name "*.sh" -type f -exec dos2unix {} \;
             
             # Make scripts executable
-            chmod +x scripts/*.sh wine-integration/*.sh 2>/dev/null || true
-            chmod +x scripts/build-iso.sh
+            chmod +x scripts/*.sh wine-integration/*.sh
             
             # Build the ISO (already running as root in container)
-            cd /workspace
-            ./scripts/build-iso.sh
+            bash /workspace/scripts/build-iso.sh
           '
     
     - name: List built files
