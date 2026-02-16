@@ -23,14 +23,16 @@ jobs:
           archlinux:latest \
           bash -c '
             # Update system and install dependencies
-            pacman -Sy --noconfirm archiso git
+            pacman -Syu --noconfirm
+            pacman -S --noconfirm archiso git sudo
             
             # Make scripts executable
-            chmod +x scripts/*.sh wine-integration/*.sh
+            chmod +x scripts/*.sh wine-integration/*.sh 2>/dev/null || true
+            chmod +x scripts/build-iso.sh
             
-            # Build the ISO
+            # Build the ISO (already running as root in container)
             cd /workspace
-            bash scripts/build-iso.sh
+            ./scripts/build-iso.sh
           '
     
     - name: List built files
