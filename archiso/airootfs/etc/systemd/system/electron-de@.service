@@ -1,0 +1,14 @@
+[Unit]
+Description=CustomOS Electron Desktop Environment
+After=graphical.target
+
+[Service]
+Type=simple
+User=%i
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/electron /usr/share/customos-desktop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target

@@ -1,0 +1,23 @@
+# Docker Compose file for CustomOS development
+# Alternative to build-docker.ps1 for easier management
+
+version: '3.8'
+
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: customos-builder
+    container_name: customos-builder
+    volumes:
+      - .:/build
+    working_dir: /build
+    command: >
+      bash -c "
+        echo 'CustomOS Docker Build Environment';
+        echo 'Run: docker-compose run builder ./scripts/build-iso.sh';
+        bash
+      "
+    stdin_open: true
+    tty: true

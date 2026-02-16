@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=CustomOS Desktop
+Comment=Electron-based Desktop Environment
+Exec=/usr/bin/startx /usr/bin/electron /usr/share/customos-desktop
+Type=Application
+DesktopNames=CustomOS

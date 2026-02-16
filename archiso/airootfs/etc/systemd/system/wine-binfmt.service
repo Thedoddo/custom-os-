@@ -1,0 +1,12 @@
+[Unit]
+Description=Wine binfmt_misc setup for automatic .exe execution
+After=systemd-binfmt.service
+Before=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/wine-binfmt-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

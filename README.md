@@ -1,216 +1,212 @@
-# CustomOS - Linux Distribution with Electron Desktop
+# CustomOS - Seamless Windows Apps on Linux
 
-A custom Linux distribution featuring a modern desktop environment built with Electron.
+A custom Linux distribution with an Electron-based desktop environment that seamlessly runs Windows applications via Wine/Proton with zero configuration.
 
-## 🎯 Project Overview
+## Vision
 
-CustomOS is a Ubuntu-based Linux distribution with a custom desktop environment powered by Electron. It combines the stability of Ubuntu with a sleek, modern interface built using web technologies.
+- **No Linux Complexity**: Users never see terminal, Wine prefixes, or Linux jargon
+- **Universal App Support**: Windows .exe files and Linux apps launch from the same launcher
+- **Custom UI**: Unique Electron-based desktop that doesn't look like traditional Linux DEs
+- **Gaming Ready**: Built-in Proton support with automatic shader caching and optimization
+- **Just Works**: Wine/Proton configured automatically, dependencies installed silently
 
-### Features
+## Architecture
 
-- **Custom Electron Desktop**: Modern UI built with HTML/CSS/JavaScript
-- **Lightweight**: Based on Ubuntu minimal with only essential packages
-- **Fast Boot**: Optimized for quick startup times
-- **Modern Design**: Clean, intuitive interface
-- **Full Desktop Experience**: Top panel, application launcher, system tray, settings
+### Base System
+- **Distribution Base**: Arch Linux (rolling release, excellent hardware support)
+- **Build Tool**: archiso for ISO creation
+- **Package Manager**: pacman + AUR support
+- **Init System**: systemd
 
-## 🏗️ Architecture
+### Desktop Environment
+- **Shell**: Custom Electron application (full-screen, frameless)
+- **UI Framework**: React + modern web technologies
+- **Window Manager**: X11 with minimal WM (Openbox) or custom Wayland compositor
+- **System Integration**: Node.js + native modules for Linux system calls
 
-```
-┌─────────────────────────────────────┐
-│   Electron Desktop Shell (UI)      │
-│   - Top Panel                       │
-│   - App Launcher                    │
-│   - System Tray                     │
-│   - Settings                        │
-├─────────────────────────────────────┤
-│   Window Manager (Openbox)         │
-├─────────────────────────────────────┤
-│   Display Server (X11)             │
-├─────────────────────────────────────┤
-│   Ubuntu Base System               │
-└─────────────────────────────────────┘
-```
+### Windows Compatibility Layer
+- **Wine**: For Windows applications
+- **Proton**: For Windows games (Steam compatibility layer)
+- **Auto-detection**: Kernel binfmt_misc for automatic .exe execution
+- **Prefix Management**: Lutris backend (headless) for isolated environments
+- **Dependencies**: winetricks, DXVK, VKD3D-Proton auto-installed
 
-## 📦 Components
+### Key Features
+1. **Smart Launcher**: Detects and launches any app type (native Linux, Windows exe, AppImage, Flatpak)
+2. **Unified File Manager**: No distinction between "Linux" and "Windows" file paths
+3. **Invisible Wine**: Users never configure Wine - it just works
+4. **Gaming Mode**: Optional compositor (gamescope) for optimized gaming
+5. **App Store**: Curated Windows/Linux apps with one-click installation
 
-- **Base**: Ubuntu 24.04 LTS (minimal)
-- **Display Server**: X.org
-- **Window Manager**: Openbox (lightweight, configurable)
-- **Login Manager**: LightDM
-- **Desktop Shell**: Custom Electron application
-- **File Manager**: PCManFM
-- **Terminal**: xterm / Electron-based custom terminal
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Linux system (Ubuntu/Debian recommended)
-- `live-build` package installed
-- 20GB+ free disk space
-- Sudo privileges
-
-### Building the ISO
-
-```bash
-# Install dependencies
-sudo apt-get update
-sudo apt-get install live-build debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools
-
-# Build the ISO
-sudo ./build.sh
-```
-
-The ISO will be created in `build/` directory.
-
-### Using GitHub Actions
-
-This project includes CI/CD configuration. Push to GitHub to automatically build the ISO:
-
-```bash
-git add .
-git commit -m "Build custom OS"
-git push
-```
-
-Download the artifact from the Actions tab.
-
-## 🛠️ Development
-
-### Desktop Application
-
-The Electron desktop is located in `desktop/` directory.
-
-```bash
-cd desktop
-npm install
-npm start  # Run in development mode
-```
-
-### Customization
-
-- **UI Styling**: Edit `desktop/src/renderer/styles.css`
-- **Panel Layout**: Modify `desktop/src/renderer/panel.html`
-- **Launcher**: Customize `desktop/src/renderer/launcher.html`
-- **System Integration**: Edit `desktop/src/main/system.js`
-
-### Building Desktop Package
-
-```bash
-cd desktop
-npm run build
-```
-
-This creates a `.deb` package in `desktop/dist/`.
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 distro/
-├── desktop/                 # Electron desktop application
-│   ├── src/
-│   │   ├── main/           # Main process (Node.js)
-│   │   └── renderer/       # Renderer process (UI)
-│   ├── package.json
-│   └── electron-builder.yml
-├── config/                  # Live-build configuration
-│   ├── hooks/              # Build hooks
-│   ├── includes/           # Files to include in ISO
-│   └── package-lists/      # Package selections
-├── build.sh                # Main build script
-├── .github/workflows/      # CI/CD configuration
-└── README.md
+├── README.md                 # This file
+├── docs/                     # Architecture and development docs
+├── archiso/                  # Arch Linux ISO builder configuration
+│   ├── packages.x86_64       # Packages to include in ISO
+│   ├── profiledef.sh         # Build profile metadata
+│   ├── airootfs/             # Root filesystem overlay
+│   │   ├── etc/              # System configuration files
+│   │   ├── usr/              # User binaries and services
+│   │   └── root/             # Root user files
+│   └── efiboot/              # EFI boot configuration
+├── electron-de/              # Custom Electron Desktop Environment
+│   ├── package.json          # Node.js dependencies
+│   ├── main.js               # Electron main process (system integration)
+│   ├── preload.js            # Secure bridge between main and renderer
+│   ├── renderer/             # Frontend UI
+│   │   ├── index.html        # Main UI entry point
+│   │   ├── styles/           # CSS/styling
+│   │   └── js/               # Frontend JavaScript/React
+│   └── system/               # System integration modules
+│       ├── launcher.js       # App detection and launching
+│       ├── wine-manager.js   # Wine/Proton integration
+│       └── desktop-parser.js # Parse .desktop files
+├── wine-integration/         # Wine/Proton automation
+│   ├── binfmt-setup.sh       # Auto .exe execution setup
+│   ├── wine-setup.sh         # Initial Wine configuration
+│   └── lutris-configs/       # Pre-configured Wine bottles
+├── scripts/                  # Build and development scripts
+│   ├── build-iso.sh          # Build bootable ISO
+│   ├── setup-wsl.sh          # Setup WSL2 environment
+│   └── test-vm.sh            # Helper for VirtualBox testing
+└── assets/                   # Branding and media
+    ├── logo.svg              # Distro logo
+    ├── wallpapers/           # Default wallpapers
+    └── icons/                # Custom icon theme
 ```
 
-## 🎨 Customization Guide
+## Development Setup
 
-### Changing the Theme
+### Prerequisites
+- **Windows**: WSL2 installed and configured
+- **WSL2**: Arch Linux distribution (or Ubuntu with arch-chroot)
+- **VirtualBox**: For testing the built ISO
+- **Node.js**: v18+ (for developing Electron UI on Windows)
 
-Edit `desktop/src/renderer/styles.css`:
+### Initial Setup
 
-```css
-:root {
-  --primary-color: #3498db;
-  --background-color: #2c3e50;
-  --text-color: #ecf0f1;
+1. **Install Arch Linux in WSL2** (if not already done):
+   ```powershell
+   # From PowerShell
+   wsl --install -d Arch  # If using ArchWSL
+   ```
+
+2. **Setup build environment in WSL2**:
+   ```bash
+   # From WSL2 terminal
+   cd /mnt/e/PROJECTS!/distro
+   sudo pacman -S archiso base-devel git nodejs npm wine
+   ```
+
+3. **Install Electron dependencies**:
+   ```bash
+   cd electron-de
+   npm install
+   ```
+
+4. **Build your first ISO**:
+   ```bash
+   cd /mnt/e/PROJECTS!/distro
+   ./scripts/build-iso.sh
+   ```
+
+5. **Test in VirtualBox**:
+   - Create new VM (Linux, Arch Linux, 4GB RAM, 20GB disk)
+   - Attach `out/CustomOS.iso`
+   - Boot and test
+
+## Development Workflow
+
+### Developing the Electron UI
+- **On Windows**: Edit files in VS Code, run `npm start` in `electron-de/` folder
+- **Testing**: Use Electron's dev tools, hot reload
+- **Building**: Package as Arch package for inclusion in ISO
+
+### Building the Distro
+- **In WSL2**: Run `./scripts/build-iso.sh`
+- **Output**: `out/CustomOS-YYYY.MM.DD-x86_64.iso`
+- **Testing**: Boot in VirtualBox or write to USB with Rufus
+
+### Iteration Cycle
+1. Modify Electron UI or archiso configuration
+2. Rebuild ISO (`./scripts/build-iso.sh`)
+3. Boot in VirtualBox
+4. Test changes
+5. Repeat
+
+## Roadmap
+
+### Phase 1: Foundation (Current)
+- [x] Project structure
+- [ ] Basic Electron desktop boots
+- [ ] Minimal ISO builds successfully
+- [ ] Can launch Linux apps from Electron UI
+
+### Phase 2: Wine Integration
+- [ ] binfmt_misc auto .exe execution
+- [ ] Lutris backend integration
+- [ ] Windows apps launch automatically
+- [ ] Icon extraction from .exe files
+
+### Phase 3: Smart Launcher
+- [ ] Parse all .desktop files
+- [ ] Unified app grid UI
+- [ ] Search and categories
+- [ ] Recently used apps
+
+### Phase 4: Polish
+- [ ] Custom branding and themes
+- [ ] Settings panel (power, display, network)
+- [ ] File manager integration
+- [ ] Installer for bare metal
+
+### Phase 5: Gaming Focus
+- [ ] Steam integration
+- [ ] Proton-GE auto-updates
+- [ ] Shader caching
+- [ ] Performance overlays
+
+## Technical Details
+
+### How .exe Auto-execution Works
+1. Kernel module `binfmt_misc` registers .exe with Wine
+2. Configuration: `echo ':wine:M::MZ::/usr/bin/wine:' > /proc/sys/fs/binfmt_misc/register`
+3. Result: `./application.exe` runs directly without `wine` prefix
+4. systemd service ensures persistence across reboots
+
+### Electron as Desktop Environment
+1. X11 session file: `/usr/share/xsessions/electron-de.desktop`
+2. Systemd user service: `electron-de.service`
+3. Electron runs full-screen, frameless
+4. Node.js main process handles system calls
+5. React renderer provides UI
+
+### Application Detection
+```javascript
+// Simplified flow
+const appType = detectAppType(path);
+if (appType === 'windows') {
+  launchWithWine(path, config);
+} else if (appType === 'desktop') {
+  parseAndLaunch(path);
+} else if (appType === 'native') {
+  spawn(path);
 }
 ```
 
-### Adding Applications
+## Contributing
 
-Add to package list in `config/package-lists/desktop.list.chroot`:
+This is a personal project, but ideas and contributions are welcome!
 
-```
-firefox
-gimp
-vlc
-```
+## License
 
-### Boot Configuration
-
-Edit GRUB settings in `config/includes.chroot/etc/default/grub`.
-
-## 🧪 Testing
-
-### Virtual Machine
-
-Test the ISO using QEMU:
-
-```bash
-qemu-system-x86_64 -cdrom build/custom-os.iso -m 2048 -enable-kvm
-```
-
-Or use VirtualBox/VMware:
-- Create new VM
-- Attach ISO as CD-ROM
-- Boot and test
-
-### Live USB
-
-Create bootable USB (Linux):
-
-```bash
-sudo dd if=build/custom-os.iso of=/dev/sdX bs=4M status=progress
-sync
-```
-
-**Warning**: Replace `/dev/sdX` with your actual USB device. This will erase the USB!
-
-## 📚 Documentation
-
-- [Building Guide](docs/building.md)
-- [Desktop Development](docs/desktop.md)
-- [Customization](docs/customization.md)
-- [Troubleshooting](docs/troubleshooting.md)
-
-## 🤝 Contributing
-
-This is a hobby project for learning. Feel free to fork and experiment!
-
-## 📝 License
-
-MIT License - See LICENSE file
-
-## 🔗 Resources
-
-- [Electron Documentation](https://www.electronjs.org/docs)
-- [Debian Live Manual](https://live-team.pages.debian.net/live-manual/html/live-manual/index.en.html)
-- [Ubuntu ISO Customization](https://help.ubuntu.com/community/LiveCDCustomization)
-
-## 🎯 Roadmap
-
-- [x] Basic Electron desktop shell
-- [x] ISO build system
-- [x] GitHub Actions CI/CD
-- [ ] Custom application launcher
-- [ ] Settings panel
-- [ ] Network manager GUI
-- [ ] Power management
-- [ ] Custom greeter theme
-- [ ] Notification system
-- [ ] Multi-monitor support
+MIT (to be decided - may change to GPL for distro components)
 
 ---
 
-**Made with ❤️ for learning Linux internals and Electron**
+**Current Status**: 🚧 Early Development - Setting up foundation
+
+Last Updated: February 15, 2026

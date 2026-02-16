@@ -1,7 +1,0 @@
-# Git Configuration
-*.sh text eol=lf
-*.hook.chroot text eol=lf
-custom-os-desktop text eol=lf
-
-# Ensure Unix line endings for scripts
-config/includes.chroot/usr/bin/* text eol=lf
