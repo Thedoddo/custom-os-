@@ -15,16 +15,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Build ISO in Arch Linux container
+    - name: Build ISO via remastering
       run: |
         docker run --rm --privileged \
           -v $(pwd):/workspace \
           -w /workspace \
-          archlinux:latest \
+          ubuntu:22.04 \
           bash -c '
-            # Update system and install dependencies
-            pacman -Syu --noconfirm
-            pacman -S --noconfirm archiso git sudo dos2unix
+            # Update system
+            apt-get update -qq
+            apt-get install -y -qq dos2unix
             
             # Fix Windows line endings
             find scripts wine-integration -name "*.sh" -type f -exec dos2unix {} \;
@@ -32,8 +32,8 @@ jobs:
             # Make scripts executable
             chmod +x scripts/*.sh wine-integration/*.sh
             
-            # Build the ISO (already running as root in container)
-            bash /workspace/scripts/build-iso.sh
+            # Build the ISO (remaster approach - much simpler!)
+            bash /workspace/scripts/build-iso-remaster.sh
           '
     
     - name: List built files

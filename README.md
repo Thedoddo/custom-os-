@@ -13,9 +13,9 @@ A custom Linux distribution with an Electron-based desktop environment that seam
 ## Architecture
 
 ### Base System
-- **Distribution Base**: Arch Linux (rolling release, excellent hardware support)
-- **Build Tool**: archiso for ISO creation
-- **Package Manager**: pacman + AUR support
+- **Distribution Base**: Ubuntu Server 22.04 (stable, well-supported)
+- **Build Tool**: ISO remastering (extract → customize → repack)
+- **Package Manager**: apt
 - **Init System**: systemd
 
 ### Desktop Environment
