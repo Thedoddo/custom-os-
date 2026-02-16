@@ -79,6 +79,10 @@ chmod +x "$ARCHISO_DIR/airootfs/usr/local/bin/wine-setup"
 mkdir -p "$ARCHISO_DIR/airootfs/etc/systemd/system"
 cp "$PROJECT_ROOT/wine-integration/wine-binfmt.service" "$ARCHISO_DIR/airootfs/etc/systemd/system/"
 
+# Recreate symlinks that were removed for Git compatibility
+echo "Recreating systemd symlinks..."
+bash "$SCRIPT_DIR/recreate-symlinks.sh" "$ARCHISO_DIR/airootfs"
+
 # Build the ISO
 echo ""
 echo "Building ISO with mkarchiso..."
